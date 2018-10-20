@@ -54,6 +54,7 @@ service.on("message", (topic, data) => {
 
     console.log("SENDING", device.topic, irCommand);
     service.sendRoot(device.topic, irCommand);
+    service.send(`status/${deviceId}/${action}`, data, { retain: true });
     writeFileSync(stateJsonPathFull, JSON.stringify(state), "utf8");
   }
 });
