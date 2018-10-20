@@ -26,24 +26,17 @@ let state = existsSync(stateJsonPathFull)
 devices.forEach(d => {
   const { id } = d;
   if (state[id]) return;
-  console.log(">>>", id);
   state[id] = { temperature: 20, mode: "off" };
 });
-
-console.log(devices);
-// console.log(devicesMap);
-// console.log(profilesMap);
-console.log("STATE", state);
 
 console.info(
   `Loaded ${devices.length} devices and ${profiles.length} profiles.`
 );
 
 service.on("message", (topic, data) => {
-  console.log(topic, data);
   if (topic.startsWith("set/")) {
     const [_, deviceId, action] = topic.split("/");
-    console.log("SET DEVICE", deviceId, action, data);
+    console.info("SET DEVICE", deviceId, action, data);
     const device = devicesMap[deviceId];
     if (!device) return;
 
@@ -59,7 +52,8 @@ service.on("message", (topic, data) => {
         ? profile.mode[deviceState.mode]
         : profile.mode[deviceState.mode][deviceState.temperature];
 
-    service.send(device.topic, irCommand);
+    console.log("SENDING", device.topic, irCommand);
+    service.sendRoot(device.topic, irCommand);
     writeFileSync(stateJsonPathFull, JSON.stringify(state), "utf8");
   }
 });

@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/denwilliams/irac-mqtt#readme",
   "dependencies": {
-    "mqtt-usvc": "^1.0.5"
+    "mqtt-usvc": "^1.0.6"
   }
 }
