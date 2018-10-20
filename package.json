@@ -1,0 +1,22 @@
+{
+  "name": "irac-mqtt",
+  "version": "1.0.0",
+  "description": "Control Air Conditioners using IR via an MQTT-to-IR-Blaster type bridge, eg [https://github.com/denwilliams/xiaomi-uir-mqtt](https://github.com/denwilliams/xiaomi-uir-mqtt)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/denwilliams/irac-mqtt.git"
+  },
+  "author": "Den Williams",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/denwilliams/irac-mqtt/issues"
+  },
+  "homepage": "https://github.com/denwilliams/irac-mqtt#readme",
+  "dependencies": {
+    "mqtt-usvc": "^1.0.5"
+  }
+}
