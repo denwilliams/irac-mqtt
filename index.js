@@ -98,5 +98,5 @@ function shallowDiff(oldVal, newVal) {
       changes.push({ key, value: newVal[key] });
     }
   }
-  return changess;
+  return changes;
 }
