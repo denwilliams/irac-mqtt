@@ -46,6 +46,7 @@ service.on("message", (topic, data) => {
     if (!profile) return;
 
     const deviceState = state[device.id];
+    const oldState = Object.assign({}, deviceState);
 
     if (action === "mode") {
       switch (data) {
@@ -76,9 +77,26 @@ service.on("message", (topic, data) => {
     console.log("SENDING", device.topic, irCommand);
 
     service.sendRoot(device.topic, irCommand);
-    service.send(`status/${deviceId}/${action}`, data, { retain: true });
+
+    const changes = shallowDiff(oldState, deviceState);
+    for (let change of changes) {
+      service.send(`status/${deviceId}/${change.key}`, change.value, {
+        retain: true
+      });
+    }
+
     writeFileSync(stateJsonPathFull, JSON.stringify(state), "utf8");
   }
 });
 
 service.subscribe("set/+/+");
+
+function shallowDiff(oldVal, newVal) {
+  const changes = [];
+  for (let key of ["temperature", "mode", "on"]) {
+    if (oldVal[key] !== newVal[key]) {
+      changes.push({ key, value: newVal[key] });
+    }
+  }
+  return changess;
+}
