@@ -26,7 +26,7 @@ let state = existsSync(stateJsonPathFull)
 devices.forEach(d => {
   const { id } = d;
   if (state[id]) return;
-  state[id] = { temperature: 20, mode: "off" };
+  state[id] = { temperature: 20, mode: "off", on: false };
 });
 
 console.info(
@@ -36,7 +36,9 @@ console.info(
 service.on("message", (topic, data) => {
   if (topic.startsWith("set/")) {
     const [_, deviceId, action] = topic.split("/");
+
     console.info("SET DEVICE", deviceId, action, data);
+
     const device = devicesMap[deviceId];
     if (!device) return;
 
@@ -44,15 +46,32 @@ service.on("message", (topic, data) => {
     if (!profile) return;
 
     const deviceState = state[device.id];
-    if (action === "mode") deviceState.mode = data;
-    if (action === "temperature") deviceState.temperature = Math.round(data);
 
-    const irCommand =
-      deviceState.mode === "off"
-        ? profile.mode[deviceState.mode]
-        : profile.mode[deviceState.mode][deviceState.temperature];
+    if (action === "mode") {
+      switch (data) {
+        case "off":
+          deviceState.on = false;
+          break;
+        case "on":
+          deviceState.on = true;
+          break;
+        default:
+          deviceState.on = true;
+          deviceState.mode = data;
+          break;
+      }
+    }
+
+    if (action === "temperature") {
+      deviceState.temperature = Math.round(data);
+    }
+
+    const irCommand = !deviceState.on
+      ? profile.mode["off"]
+      : profile.mode[deviceState.mode][deviceState.temperature];
 
     console.log("SENDING", device.topic, irCommand);
+
     service.sendRoot(device.topic, irCommand);
     service.send(`status/${deviceId}/${action}`, data, { retain: true });
     writeFileSync(stateJsonPathFull, JSON.stringify(state), "utf8");
