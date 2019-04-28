@@ -64,6 +64,7 @@ service.on("message", (topic, data) => {
 
     if (action === "temperature") {
       deviceState.temperature = Math.round(data);
+      deviceState.on = true;
     }
 
     const irCommand = !deviceState.on
