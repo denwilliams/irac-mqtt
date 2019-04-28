@@ -70,6 +70,8 @@ service.on("message", (topic, data) => {
       ? profile.mode["off"]
       : profile.mode[deviceState.mode][deviceState.temperature];
 
+    console.log("NEW STATE", deviceState);
+
     console.log("SENDING", device.topic, irCommand);
 
     service.sendRoot(device.topic, irCommand);
