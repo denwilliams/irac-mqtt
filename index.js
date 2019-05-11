@@ -83,7 +83,7 @@ service.on("message", (topic, data) => {
       service.send(`status/${deviceId}/${change.key}`, change.value, {
         retain: true
       });
-      if (change.key === "power") {
+      if (change.key === "on") {
         if (change.value) {
           service.send(`status/${deviceId}/mode`, deviceState.mode, {
             retain: true
