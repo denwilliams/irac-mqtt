@@ -83,6 +83,17 @@ service.on("message", (topic, data) => {
       service.send(`status/${deviceId}/${change.key}`, change.value, {
         retain: true
       });
+      if (change.key === "power") {
+        if (change.value) {
+          service.send(`status/${deviceId}/mode`, deviceState.mode, {
+            retain: true
+          });
+        } else {
+          service.send(`status/${deviceId}/mode`, "off", {
+            retain: true
+          });
+        }
+      }
     }
 
     writeFileSync(stateJsonPathFull, JSON.stringify(state), "utf8");
