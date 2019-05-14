@@ -76,8 +76,6 @@ service.on("message", (topic, data) => {
 
     console.log("SENDING", device.topic, irCommand);
 
-    service.sendRoot(device.topic, irCommand);
-
     const changes = shallowDiff(oldState, deviceState);
     for (let change of changes) {
       service.send(`status/${deviceId}/${change.key}`, change.value, {
@@ -88,6 +86,10 @@ service.on("message", (topic, data) => {
           service.send(`status/${deviceId}/mode`, deviceState.mode, {
             retain: true
           });
+          const onCode = profile.mode["on"];
+          if (onCode) {
+            service.sendRoot(device.topic, irCommand);
+          }
         } else {
           service.send(`status/${deviceId}/mode`, "off", {
             retain: true
@@ -95,6 +97,7 @@ service.on("message", (topic, data) => {
         }
       }
     }
+    service.sendRoot(device.topic, irCommand);
 
     writeFileSync(stateJsonPathFull, JSON.stringify(state), "utf8");
   }
