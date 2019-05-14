@@ -87,6 +87,7 @@ service.on("message", (topic, data) => {
             retain: true
           });
           const onCode = profile.mode["on"];
+          console.log("ON CODE", onCode);
           if (onCode) {
             service.sendRoot(device.topic, irCommand);
           }
