@@ -4,6 +4,8 @@ const { join } = require("path");
 const mqttusvc = require("mqtt-usvc");
 const { existsSync, readFileSync, writeFileSync } = require("fs");
 
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const service = mqttusvc.create();
 
 const { devices, profiles, dataPath } = service.config;
@@ -33,7 +35,7 @@ console.info(
   `Loaded ${devices.length} devices and ${profiles.length} profiles.`
 );
 
-service.on("message", (topic, data) => {
+service.on("message", async (topic, data) => {
   if (topic.startsWith("set/")) {
     const [_, deviceId, action] = topic.split("/");
 
@@ -87,6 +89,7 @@ service.on("message", (topic, data) => {
           const onCode = profile.mode["on"];
           if (onCode) {
             service.sendRoot(device.topic, onCode);
+            await delay(2000);
           }
         } else {
           service.send(`status/${deviceId}/mode`, "off", {
